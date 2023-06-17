@@ -1,27 +1,23 @@
-{% extends "users/base.html" %} {% block content %} {% if messages %}
-<div>
-  {% for message in messages %}
-  <div {% if message.tags %} class="alert-{{ message.tags }}" {% endif %}>
-    {{ message }}
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-<form action="{% url 'users:signin' %}" method="post">
+{% extends "quotes/base.html" %} {% block content %}
+<h2>Add Author</h2>
+<form method="post">
   {% csrf_token %}
   <div>
-    <label> Username: {{ form.username }} </label>
+    <label for="{{ form.fullname.id_for_label }}">Full Name:</label>
+    {{ form.fullname }}
   </div>
-
   <div>
-    <label>Password: {{ form.password }} </label>
+    <label for="{{ form.born_date.id_for_label }}">Born Date:</label>
+    {{ form.born_date }}
   </div>
-
-  <div class="grid">
-    <button type="submit">Submit</button>
-    <button type="reset" class="secondary">Reset</button>
+  <div>
+    <label for="{{ form.born_location.id_for_label }}">Born Location:</label>
+    {{ form.born_location }}
   </div>
+  <div>
+    <label for="{{ form.description.id_for_label }}">Description:</label>
+    {{ form.description }}
+  </div>
+  <button type="submit">Submit</button>
 </form>
-
 {% endblock %}

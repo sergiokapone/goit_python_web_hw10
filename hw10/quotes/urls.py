@@ -11,4 +11,6 @@ urlpatterns = [
     ),
     path("author/<slug:author_slug>/", views.author_page, name="author_page"),
     path("users/", include("users.urls")),
+    path('add_author/', views.add_author, name='add_author'),
+    path('add_quote/', views.add_quote, name='add_quote'),
 ]

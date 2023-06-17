@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .login import LoginForm
 
+from .login import LoginForm
 
 from .register import RegisterForm
 
 
 def signupuser(request):
     if request.user.is_authenticated:
-        return redirect(to="quote:main")
+        return redirect(to="quotes:root")
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -39,3 +39,6 @@ def signinuser(request):
         return redirect(to="quotes:root")
 
     return render(request, "users/login.html", context={"form": LoginForm()})
+
+
+

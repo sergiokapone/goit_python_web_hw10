@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Count
+
+from .forms import QuoteForm
 from .models import Author, Quote, Tag
+from django.contrib.auth.decorators import login_required
+
 
 
 def get_top_tags():
@@ -54,3 +58,28 @@ def author_page(request, author_slug):
         "quotes/author_page.html",
         context={"author": author, "top_tags": top_tags},
     )
+
+
+@login_required
+def add_author(request):
+    if request.method == "POST":
+        form = Author(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('quotes:root')
+    else:
+        form = Author()
+    return render(request, 'quotes/add_author.html', {'form': form})
+
+@login_required
+def add_quote(request):
+    if request.method == "POST":
+        form = QuoteForm(request.POST)
+        if form.is_valid():
+            quote = form.save(commit=False)
+            quote.save()  # Сохранение объекта Quote для установки значения id
+            form.save_m2m()  # Сохранение связей many-to-many
+            return redirect('quotes:root')
+    else:
+        form = QuoteForm()
+    return render(request, 'quotes/add_quote.html', {'form': form})

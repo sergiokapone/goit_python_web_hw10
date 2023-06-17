@@ -1,45 +1,24 @@
 import os
 import django
-from pymongo import MongoClient
+from django.utils.text import slugify
 
-os.environ.setdefault("DJANGO_SETTINGS_MODDULE", "hw10.settings")
+# from pymongo import MongoClient
+
+if "DJANGO_SETTINGS_MODULE" in os.environ:
+    del os.environ["DJANGO_SETTINGS_MODULE"]
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hw10.settings")
 django.setup()
 
 
-from quotes.models import Quote, Tag, Author # noqa
-
-client = MongoClient("mongodb+srv://PSM:GoIThw8@cluster0.y0zbkd4.mongodb.net")
-db =client.Quotes
+from quotes.models import Author # noqa
 
 
-authors = db.authors.find()
+
+
+authors = Author.objects.all()
 
 
 for author in authors:
-    Author.objects.get_or_create(
-        fullname=author['fullname'],
-        born_date = author['born_date'],
-        born_location = author['born_location'],
-        description = author['description'],
-    )
-
-
-quotes = db.quotes.find()
-
-for quote in quotes:
-    tags = []
-    for tag in quote['tags']:
-        t, *_ =Tag.objects.get_or_create(name=tag)
-        tags.append(t)
-
-    exist_quote = bool(len(Quote.objects.filter(quote=quote['quote'])))
-
-    if not exist_quote:
-        author  = db.authors.find_one({'_id': quote['author']})
-        a = Author.objects.get(fullname=author['fullname'])
-        q = Quote.objects.create(
-            quote=quote['quote'],
-            author=a
-        )
-        for tag in tags:
-            q.tags.add(tag)
+    author.slug = slugify(author.fullname)
+    author.save()

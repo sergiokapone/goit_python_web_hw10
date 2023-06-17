@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.text import slugify
+
 
 
 class Author(models.Model):
@@ -7,6 +9,13 @@ class Author(models.Model):
     born_location = models.CharField(max_length=150)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.fullname)
+        super().save(*args, **kwargs)
+
+    
 
 class Tag(models.Model):
     name = models.CharField(max_length=30, null=False, unique=True)

@@ -7,37 +7,23 @@
 </div>
 
 <form method="post" action="{% url 'users:signup' %}">
-  <div class="form-group">
-    <label for="id_username">Username:</label>
-    <input
-      type="email"
-      class="form-control"
-      id="exampleInputEmail1"
-      aria-describedby="emailHelp"
-      placeholder="Enter email"
-    />
+  {% csrf_token %}
+  <div>
+    <label> Username: {{ form.username }} </label>
+    <span>{{ form.errors.username }}</span>
   </div>
-  <div class="form-group">
-    <label for="id_password1">Password:</label>
-    <input
-      type="password"
-      class="form-control"
-      id="exampleInputPassword1"
-      placeholder="Password"
-    />
+  <br />
+  <div>
+    <label> Password: {{ form.password1 }} </label>
+    <span>{{ form.errors.password1 }}</span>
   </div>
-  <div class="form-group mb-3">
-    <label for="id_password2">Password confirmation:</label>
-    <input
-      type="password"
-      class="form-control"
-      id="exampleInputPassword1"
-      placeholder="Password"
-    />
+  <div>
+    <label> Password confirmation: {{ form.password2 }} </label>
+    <span>{{ form.errors.password2 }}</span>
   </div>
-  <div class="button-group mb-3">
-    <button type="submit" class="btn btn-primary btn-block">Submit</button>
-    <button type="reset" class="btn btn-secondary btn-block">Reset</button>
+  <div class="grid">
+    <button type="submit">Submit</button>
+    <button type="reset" class="secondary">Reset</button>
   </div>
 </form>
 

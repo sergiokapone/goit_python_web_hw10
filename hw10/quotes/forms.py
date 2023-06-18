@@ -11,8 +11,7 @@ class QuoteForm(forms.ModelForm):
 
     author_choices = Author.objects.all()
 
-    tags = forms.CharField(label='Tags', required=False)  # Заменяем поле на CharField
-
+    tags = forms.CharField(label='Tags', required=False)  
 
     author = forms.ModelChoiceField(
         label='Author',
@@ -27,6 +26,4 @@ class QuoteForm(forms.ModelForm):
 
 
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['author'].choices = [(author.id, author.fullname) for author in Author.objects.all()]
+

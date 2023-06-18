@@ -18,7 +18,7 @@ def signupuser(request):
         if form.is_valid():
             form.save()
             print('Try redirect')
-            return redirect(to="quotes:root")
+            return redirect(to="users:signin")
         else:
             return render(request, "users/signup.html", context={"form": form})
 

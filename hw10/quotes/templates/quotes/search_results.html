@@ -1,7 +1,7 @@
 {% extends 'quotes/base.html' %} {% load extract %} {% block content %}
 <div class="row">
   <div class="col-md-8">
-    <h2>Searched Results</h2>
+    <h2>Searched Results for "{{ query }}"</h2>
 
     {% for quote in results %}
     <div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">

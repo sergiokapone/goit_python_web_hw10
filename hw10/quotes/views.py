@@ -2,9 +2,11 @@ from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Count
 
-from .forms import QuoteForm
+from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote, Tag
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 
 
@@ -63,12 +65,16 @@ def author_page(request, author_slug):
 @login_required
 def add_author(request):
     if request.method == "POST":
-        form = Author(request.POST)
+        form = AuthorForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('quotes:root')
+            fullname = form.cleaned_data['fullname']
+            if not Author.objects.filter(fullname=fullname).exists():
+                form.save()
+                return redirect('quotes:root')
+            else:
+                messages.error(request, 'Author already exists.')
     else:
-        form = Author()
+        form = AuthorForm()
     return render(request, 'quotes/add_author.html', {'form': form})
 
 @login_required
@@ -77,9 +83,10 @@ def add_quote(request):
         form = QuoteForm(request.POST)
         if form.is_valid():
             quote = form.save(commit=False)
-            quote.save()  # Сохранение объекта Quote для установки значения id
-            form.save_m2m()  # Сохранение связей many-to-many
+            quote.save() 
+            form.save_m2m()  # Maintaining many-to-many links
             return redirect('quotes:root')
     else:
         form = QuoteForm()
     return render(request, 'quotes/add_quote.html', {'form': form})
+

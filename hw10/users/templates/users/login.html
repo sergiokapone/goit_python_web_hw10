@@ -1,23 +1,38 @@
-{% extends "quotes/base.html" %} {% block content %}
-<h2>Add Author</h2>
-<form method="post">
+{% extends "users/base.html" %} {% block content %} {% if messages %}
+
+<div>
+  {% for message in messages %}
+  <div {% if message.tags %} class="alert-{{ message.tags }}" {% endif %}>
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<a href="{% url 'quotes:root' %}" class="btn btn-link"
+  >Go back to the main page</a
+>
+
+<hr />
+
+<div>
+  <h2>Sign Up</h2>
+</div>
+
+<form action="{% url 'users:signin' %}" method="post">
   {% csrf_token %}
   <div>
-    <label for="{{ form.fullname.id_for_label }}">Full Name:</label>
-    {{ form.fullname }}
+    <label> Username: {{ form.username }} </label>
   </div>
+
   <div>
-    <label for="{{ form.born_date.id_for_label }}">Born Date:</label>
-    {{ form.born_date }}
+    <label>Password: {{ form.password }} </label>
   </div>
-  <div>
-    <label for="{{ form.born_location.id_for_label }}">Born Location:</label>
-    {{ form.born_location }}
+
+  <div class="grid">
+    <button type="submit">Submit</button>
+    <button type="reset" class="secondary">Reset</button>
   </div>
-  <div>
-    <label for="{{ form.description.id_for_label }}">Description:</label>
-    {{ form.description }}
-  </div>
-  <button type="submit">Submit</button>
 </form>
+
 {% endblock %}

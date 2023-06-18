@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 from .login import LoginForm
 
@@ -42,3 +44,8 @@ def signinuser(request):
 
 
 
+
+@login_required
+def signoutuser(request):
+    logout(request)
+    return redirect(to='quotes:root')

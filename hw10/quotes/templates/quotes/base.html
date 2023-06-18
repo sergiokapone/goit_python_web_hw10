@@ -21,13 +21,41 @@
             <a href="/" style="text-decoration: none">Quotes to Scrape</a>
           </h1>
         </div>
-        <div class="col-md-4">
-          <p>
-            <a href="/login" class="btn btn-primary">SignUp</a>
-            <a href="/login" class="btn btn-primary">Login</a>
-            <a href="/login" class="btn btn-primary">Logout</a>
-          </p>
-        </div>
+        <nav
+          style="
+            margin-bottom: 20px;
+            border-bottom: 2px solid;
+            padding-left: 30px;
+          "
+        >
+          {% if user.is_authenticated %}
+          <ul>
+            <li>
+              <a href="{% url 'quotes:add_quote' %}" role="button">Add quote</a>
+            </li>
+            <li>
+              <a href="{% url 'quotes:add_author' %}" role="button"
+                >Add author</a
+              >
+            </li>
+          </ul>
+          <ul>
+            <li>Welcome <b>{{ user.username }}!</b></li>
+            <li>
+              <a href="{% url 'users:signout' %}" role="button">Sign Out</a>
+            </li>
+          </ul>
+          {% else %}
+          <ul>
+            <li>
+              <a href="{% url 'users:signup' %}" role="button">Sign Up</a>
+            </li>
+            <li>
+              <a href="{% url 'users:signin' %}" role="button">Sign In</a>
+            </li>
+          </ul>
+          {% endif %}
+        </nav>
       </div>
 
       {% block content %} {% endblock %}

@@ -1,6 +1,8 @@
 {% extends "users/base.html" %} {% block content %}
 
-<button type="button" class="btn btn-link">Go back to the main page</button>
+<a href="{% url 'quotes:root' %}" class="btn btn-link"
+  >Go back to the main page</a
+>
 <hr />
 <div>
   <h2>Sign Up</h2>

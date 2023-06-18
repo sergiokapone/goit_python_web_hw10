@@ -15,10 +15,16 @@ class Author(models.Model):
         self.slug = slugify(self.fullname)
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.fullname
+
     
 
 class Tag(models.Model):
     name = models.CharField(max_length=30, null=False, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Quote(models.Model):
     quote = models.TextField()

@@ -78,3 +78,9 @@ Quit the server with CONTROL-C.
 
 6. Для наповнення бази даних натисніть на сторінці `Fill quotes`. Через деякий час на сторінці з'являться цитати
    ![вигляд головної сторінки сайту](./pictures/site.png)
+   
+## Довідкові матеріали
+
+1. https://django.fun/
+2. https://docs.djangoproject.com/en/4.2/
+3. https://proproprogs.ru/django

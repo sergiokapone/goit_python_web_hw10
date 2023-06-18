@@ -83,8 +83,13 @@ def add_quote(request):
         form = QuoteForm(request.POST)
         if form.is_valid():
             quote = form.save(commit=False)
-            quote.save() 
-            form.save_m2m()  # Maintaining many-to-many links
+            quote.save()
+            
+            # Processing entered text to create a new tag
+            tag_name = form.cleaned_data['tags']
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            quote.tags.add(tag)
+            
             return redirect('quotes:root')
     else:
         form = QuoteForm()

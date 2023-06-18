@@ -8,8 +8,11 @@ class AuthorForm(forms.ModelForm):
 
 
 class QuoteForm(forms.ModelForm):
-    
+
     author_choices = Author.objects.all()
+
+    tags = forms.CharField(label='Tags', required=False)  # Заменяем поле на CharField
+
 
     author = forms.ModelChoiceField(
         label='Author',

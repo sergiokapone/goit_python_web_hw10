@@ -1,0 +1,19 @@
+{% extends 'quotes/base.html' %} {% block content %}
+
+<h2>Scrape Quotes</h2>
+
+<form method="get" action="{% url 'quotes:scrape_quotes' %}" class="mt-4">
+  <div class="mb-3">
+    <label for="save_path" class="form-label">Save Path:</label>
+    <input
+      type="text"
+      id="save_path"
+      name="save_path"
+      class="form-control"
+      placeholder="Enter the save path"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Save JSON Files</button>
+</form>
+
+{% endblock %}

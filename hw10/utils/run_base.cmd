@@ -1,1 +1,1 @@
-docker run --name quotessite -p 5432:5432 -e POSTGRES_PASSWORD=54321 -d postgres
+docker run --name quotessite -p 5432:5432 -e POSTGRES_PASSWORD=54321 postgres POSTGRES_DB=quotessite -d 

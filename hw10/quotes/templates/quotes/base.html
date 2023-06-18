@@ -51,7 +51,6 @@
           {% endif %}
         </nav>
       </div>
-      {% if user.is_authenticated %}
       <ul class="nav">
         {% if user.is_authenticated %}
         <li class="nav-item">
@@ -73,9 +72,13 @@
           >
         </li>
         {% endif %}
+        <li class="nav-item">
+          <a href="{% url 'quotes:fill_base' %}" class="nav-link" role="button"
+            >Fill quotes</a
+          >
+        </li>
       </ul>
 
-      {% endif %}
       <form method="GET" action="{% url 'quotes:search_results' %}">
         <div class="input-group mb-2">
           <input

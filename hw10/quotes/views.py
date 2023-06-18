@@ -8,6 +8,7 @@ from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote, Tag
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from pymongo import MongoClient
 
 
 def get_top_tags():
@@ -112,6 +113,41 @@ def search_results(request):
         "results": results,
     }
     return render(request, "quotes/search_results.html", context)
+
+
+def fill_base(request):
+    client = MongoClient("mongodb+srv://PSM:GoIThw8@cluster0.y0zbkd4.mongodb.net/")
+    db = client.Quotes
+
+    authors = db.authors.find()
+    quotes = db.quotes.find()
+
+    for author in authors:
+        Author.objects.get_or_create(
+            fullname=author["fullname"],
+            born_date=author["born_date"],
+            born_location=author["born_location"],
+            description=author["description"],
+        )
+
+    for quote in quotes:
+        tags = []
+        for tag in quote["tags"]:
+            t, *_ = Tag.objects.get_or_create(name=tag)
+            tags.append(t)
+
+        exist_quote = bool(len(Quote.objects.filter(quote=quote["quote"])))
+
+        if not exist_quote:
+            author = db.authors.find_one({"_id": quote["author"]})
+            a = Author.objects.get(fullname=author["fullname"])
+            q = Quote.objects.create(quote=quote["quote"], author=a)
+            for tag in tags:
+                q.tags.add(tag)
+
+    messages.success(request, "Base filled successfully!")
+
+    return redirect("quotes:root")
 
 
 def scrape_quotes(request):

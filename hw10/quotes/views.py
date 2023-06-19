@@ -26,11 +26,12 @@ def main(request, page=1):
     quotes_on_page = paginator.page(page)
 
     top_tags = get_top_tags()
+    context={"quotes": quotes_on_page, "top_tags": top_tags}
 
     return render(
         request,
         "quotes/index.html",
-        context={"quotes": quotes_on_page, "top_tags": top_tags},
+        context,
     )
 
 
@@ -43,11 +44,12 @@ def quotes_by_tag(request, tag_name, page=1):
     quotes_on_page = paginator.page(page)
 
     top_tags = get_top_tags()
+    context={"quotes": quotes_on_page, "tag": tag, "top_tags": top_tags}
 
     return render(
         request,
         "quotes/quotes_by_tag.html",
-        context={"quotes": quotes_on_page, "tag": tag, "top_tags": top_tags},
+        context,
     )
 
 
@@ -55,11 +57,12 @@ def author_page(request, author_slug):
     author = Author.objects.get(slug=author_slug)
 
     top_tags = get_top_tags()
+    context={"author": author, "top_tags": top_tags}
 
     return render(
         request,
         "quotes/author_page.html",
-        context={"author": author, "top_tags": top_tags},
+        context,
     )
 
 
@@ -95,7 +98,8 @@ def add_quote(request):
             return redirect("quotes:root")
     else:
         form = QuoteForm()
-    return render(request, "quotes/add_quote.html", {"form": form})
+        context={"form": form}
+    return render(request, "quotes/add_quote.html", context)
 
 
 def search_results(request):

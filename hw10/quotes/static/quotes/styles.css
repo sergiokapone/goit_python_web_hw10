@@ -59,10 +59,6 @@
   border-radius: 15px;
 }
 
-.disabled {
-  color: 333333;
-}
-
 .tags-box {
   text-align: right;
 }
@@ -88,4 +84,8 @@ a {
 
 a:hover {
   color: #2c4674;
+}
+
+.disabled {
+  display: none;
 }

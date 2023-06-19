@@ -1,8 +1,10 @@
 {% extends 'quotes/base.html '%} {% load extract %}{% block content %}
 
 <div class="row">
-  <div class="col-md-8">{% include 'quotes/quotes.html '%}</div>
+  <div class="col-md-8">
+    <div>{% include 'quotes/quotes.html '%}</div>
+    <div>{% include 'quotes/prev_next.html' with top_tags=top_tags %}</div>
+  </div>
   {% include 'quotes/top_tags.html' with top_tags=top_tags %}
 </div>
-
 {% endblock %}

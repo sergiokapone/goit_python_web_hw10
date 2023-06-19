@@ -8,11 +8,7 @@
         >{{ tag.name }}</a
       >
     </h2>
-
-      { % include 'quotes/quotes.html '%}
-      </div>
-    </div>
-    {% endfor %}
+    {% include 'quotes/quotes.html '%}
   </div>
   <div class="col-md-4 tags-box">
     {% include 'quotes/top_tags.html' with top_tags=top_tags %}

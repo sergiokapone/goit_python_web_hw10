@@ -1,0 +1,23 @@
+{% for quote in quotes %}
+<div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">
+  <span class="text" itemprop="text">{{ quote.quote }}</span>
+  <span>
+    by
+    <small class="author" itemprop="author">{{ quote.author.fullname }}</small>
+    <a
+      href="{% url 'quotes:author_page' author_slug=quote.author.fullname|slugify %}"
+      >(about)</a
+    >
+  </span>
+  <div class="tags">
+    Tags: {% for tag in quote.tags.all %}
+    <a
+      class="tag"
+      href="{% url 'quotes:quotes_by_tag' tag_name=tag.name page=1 %}"
+      >{{ tag.name }}</a
+    >
+
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}

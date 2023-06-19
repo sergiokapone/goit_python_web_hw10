@@ -110,7 +110,7 @@ def search_results(request):
 
     context = {
         "query": query,
-        "results": results,
+        "quotes": results,
     }
     return render(request, "quotes/search_results.html", context)
 

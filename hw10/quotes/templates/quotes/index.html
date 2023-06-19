@@ -4,9 +4,7 @@
   <div class="col-md-8">
     {% include 'quotes/quotes.html '%} {% include 'quotes/nav.html '%}
   </div>
-  <div class="col-md-4 tags-box">
-    {% include 'quotes/top_tags.html' with top_tags=top_tags %}
-  </div>
+  {% include 'quotes/top_tags.html' with top_tags=top_tags %}
 </div>
 
 {% endblock %}

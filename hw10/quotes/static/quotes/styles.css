@@ -63,6 +63,10 @@
   text-align: right;
 }
 
+.search-box {
+  text-align: right;
+}
+
 .tag-item {
   display: block;
   margin: 4px;

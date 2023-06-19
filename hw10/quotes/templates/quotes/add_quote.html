@@ -2,18 +2,18 @@
 <h2>Add Quote</h2>
 <form method="post">
   {% csrf_token %}
-  <div>
+  <div class="form-group">
     <label for="{{ form.quote.id_for_label }}">Quote:</label>
-    {{ form.quote }}
+    <div class="col-md-4">{{ form.quote }}</div>
   </div>
-  <div>
+  <div class="form-group">
     <label for="{{ form.tags.id_for_label }}">Tags:</label>
-    {{ form.tags }}
+    <div class="col-md-4">{{ form.tags }}</div>
   </div>
-  <div>
+  <div class="form-group">
     <label for="{{ form.author.id_for_label }}">Author:</label>
-    {{ form.author }}
+    <div class="col-md-4">{{ form.author }}</div>
   </div>
-  <button type="submit">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}

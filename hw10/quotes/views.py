@@ -15,7 +15,7 @@ def get_top_tags():
     top_tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by("-num_quotes")[
         :10
     ]
-    top_tags = [(tag, 2 * tag.num_quotes) for tag in top_tags]
+    top_tags = [(tag,  2.75* tag.num_quotes) for tag in top_tags]
     return top_tags
 
 

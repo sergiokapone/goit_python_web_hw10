@@ -95,7 +95,7 @@ Quit the server with CONTROL-C.
 - `author.json`
 - `quotes.json`
 
-Для збереження, у віекні форми треба ввести шлях, куди зберігати файли і
+Для збереження, у вікні форми треба ввести шлях, куди зберігати файли і
 натиснути кнопку `Save JSON files`
 
 ![scrape](./pictures/scrape.png)

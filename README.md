@@ -23,24 +23,20 @@
 ```text
 ├── hw10\
 │   ├── hw10\
-│   │   ├── __pycache__\
 │   │   ├── settings.py
 │   │   ├── urls.py
 │   │   └── wsgi.py
 │   ├── quotes\
-│   │   ├── __pycache__\
 │   │   ├── migrations\
 │   │   ├── static\
 │   │   ├── templates\
 │   │   └── templatetags\
 │   ├── users\
-│   │   ├── __pycache__\
 │   │   ├── migrations\
 │   │   ├── static\
 │   │   ├── templates\
 │   │   └── views.py
 │   └── utils\
-│       └── __pycache__\
 └── manage.py
 ```
 

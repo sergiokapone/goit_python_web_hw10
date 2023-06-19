@@ -112,9 +112,12 @@ def search_results(request):
             | Q(author__fullname__icontains=query)
         ).distinct()
 
+    top_tags = get_top_tags()
+
     context = {
         "query": query,
         "quotes": results,
+        "top_tags": top_tags,
     }
     return render(request, "quotes/search_results.html", context)
 

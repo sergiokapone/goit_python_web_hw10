@@ -1,8 +1,11 @@
 {% extends 'quotes/base.html' %} {% load extract %} {% block content %}
+
 <div class="row">
   <div class="col-md-8">
     <h2>Searched Results for "{{ query }}"</h2>
     {% include 'quotes/quotes.html '%}
   </div>
+  {% include 'quotes/top_tags.html' with top_tags=top_tags %}
 </div>
+
 {% endblock %}

@@ -43,9 +43,7 @@ def main(request, page=1):
             | Q(author__fullname__icontains=query)
         ).distinct()
 
-        per_page = quotes.count() if quotes.count() <= 10 else 1000
-    else:
-        per_page = 10
+    per_page = 10
 
     paginator = Paginator(quotes, per_page)
     quotes_on_page = paginator.get_page(page)
@@ -64,6 +62,24 @@ def main(request, page=1):
         "quotes/index.html",
         context,
     )
+
+
+def searched_results(request, query, page=1):
+    quotes = Quote.objects.filter(
+        Q(quote__icontains=query) |
+        Q(tags__name__icontains=query) |
+        Q(author__fullname__icontains=query)
+    ).distinct()
+
+    paginator = Paginator(quotes, 10)  
+    page_quotes = paginator.get_page(page)
+
+    context = {
+        'query': query,
+        'quotes': page_quotes
+    }
+
+    return render(request, 'quotes/searched_results.html', context)
 
 
 

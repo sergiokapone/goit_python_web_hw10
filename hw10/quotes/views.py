@@ -33,15 +33,36 @@ functional_menu = [
 ]
 
 def main(request, page=1):
-    query = request.GET.get("search_query")
+
     quotes = Quote.objects.all()
 
-    if query:
-        quotes = quotes.filter(
-            Q(quote__icontains=query)
-            | Q(tags__name__icontains=query)
-            | Q(author__fullname__icontains=query)
-        ).distinct()
+    per_page = 10
+
+    paginator = Paginator(quotes, per_page)
+    quotes_on_page = paginator.get_page(page)
+
+    top_tags = get_top_tags()
+
+    context = {
+        "top_tags": top_tags,
+        "quotes": quotes_on_page,
+        "functional_menu": functional_menu,
+    }
+
+    return render(
+        request,
+        "quotes/index.html",
+        context,
+    )
+
+
+def searched_results(request, query=None, page=1):
+    query = request.GET.get("search_query")  or query
+    quotes = Quote.objects.filter(
+        Q(quote__icontains=query) |
+        Q(tags__name__icontains=query) |
+        Q(author__fullname__icontains=query)
+    ).distinct()
 
     per_page = 10
 
@@ -55,28 +76,6 @@ def main(request, page=1):
         "top_tags": top_tags,
         "quotes": quotes_on_page,
         "functional_menu": functional_menu,
-    }
-
-    return render(
-        request,
-        "quotes/index.html",
-        context,
-    )
-
-
-def searched_results(request, query, page=1):
-    quotes = Quote.objects.filter(
-        Q(quote__icontains=query) |
-        Q(tags__name__icontains=query) |
-        Q(author__fullname__icontains=query)
-    ).distinct()
-
-    paginator = Paginator(quotes, 10)  
-    page_quotes = paginator.get_page(page)
-
-    context = {
-        'query': query,
-        'quotes': page_quotes
     }
 
     return render(request, 'quotes/searched_results.html', context)

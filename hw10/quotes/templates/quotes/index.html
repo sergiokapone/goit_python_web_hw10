@@ -1,6 +1,4 @@
-{% extends 'quotes/base.html' %} {% block content %} {% if query %}
-<h2>Search results for '{{ query }}'</h2>
-{% endif %}
+{% extends 'quotes/base.html' %} {% block content %}
 <div class="row">
   <div class="col-md-8">
     <div>{% include 'quotes/quotes.html' %}</div>
@@ -11,7 +9,7 @@
         >
           {% if quotes.has_previous %}
           <a
-            href="{% url 'quotes:searched_results' query=query page=quotes.previous_page_number %}"
+            href="{% url 'quotes:root_paginate' page=quotes.previous_page_number %}"
           >
             <span aria-hidden="true">←</span> Previous
           </a>
@@ -20,7 +18,7 @@
         <li class="next {% if not quotes.has_next %}invisible{% endif %}">
           {% if quotes.has_next %}
           <a
-            href="{% url 'quotes:searched_results' query=query page=quotes.next_page_number %}"
+            href="{% url 'quotes:root_paginate' page=quotes.next_page_number %}"
           >
             Next <span aria-hidden="true">→</span>
           </a>

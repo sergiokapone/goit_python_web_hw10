@@ -1,4 +1,5 @@
-<form method="GET" action="{% url 'quotes:root' %}">
+<form method="get" action="{% url 'quotes:searched_results' %}">
+  {% csrf_token %}
   <div class="input-group">
     <input
       type="text"

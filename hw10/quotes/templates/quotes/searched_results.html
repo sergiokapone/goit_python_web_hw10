@@ -12,7 +12,7 @@
         >
           {% if quotes.has_previous %}
           <a
-            href="{% url 'quotes:searched_results' query=query page=quotes.previous_page_number %}"
+            href="{% url 'quotes:searched_results_paginated' query=query page=quotes.previous_page_number %}"
           >
             <span aria-hidden="true">←</span> Previous
           </a>
@@ -21,7 +21,7 @@
         <li class="next {% if not quotes.has_next %}invisible{% endif %}">
           {% if quotes.has_next %}
           <a
-            href="{% url 'quotes:searched_results' query=query page=quotes.next_page_number %}"
+            href="{% url 'quotes:searched_results_paginated' query=query page=quotes.next_page_number %}"
           >
             Next <span aria-hidden="true">→</span>
           </a>

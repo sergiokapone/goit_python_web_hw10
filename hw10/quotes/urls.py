@@ -15,5 +15,7 @@ urlpatterns = [
     path("add_quote/", views.add_quote, name="add_quote"),
     path("scrape_quotes/", views.scrape_quotes, name="scrape_quotes"),
     path("fill_base/", views.fill_base, name="fill_base"),
-    path('search/<str:query>/page/<int:page>/', views.searched_results, name='searched_results')
+    path('search/', views.searched_results, name='searched_results'),
+    path('search/page/<str:query>/<int:page>/', views.searched_results, name='searched_results_paginated')
+
 ]

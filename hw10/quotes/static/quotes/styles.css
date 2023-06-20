@@ -24,6 +24,20 @@ h3 {
   font-style: italic;
 }
 
+.quote span.text {
+  font-family: "Pacifico";
+  display: block;
+  margin-bottom: 5px;
+  font-size: large;
+  font-style: italic;
+  position: relative; /* Добавлено для позиционирования псевдоэлементов */
+}
+
+.quote span.text::before,
+.quote span.text::after {
+  content: '"';
+}
+
 .quote small.author {
   font-weight: bold;
   color: #3677e8;

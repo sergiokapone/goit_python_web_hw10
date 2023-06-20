@@ -3,7 +3,7 @@
   <span class="text" itemprop="text">{{ quote.quote }}</span>
   <span>
     by
-    <small class="author" itemprop="author">{{ quote.author.fullname }}</small>
+    <small class="author" itemprop="author">{{ quote.author.fullname }} </small>
     <a
       href="{% url 'quotes:author_page' author_slug=quote.author.fullname|slugify %}"
       >(about)</a

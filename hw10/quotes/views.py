@@ -33,27 +33,38 @@ functional_menu = [
 ]
 
 def main(request, page=1):
-
-
-    
+    query = request.GET.get("search_query")
     quotes = Quote.objects.all()
-    per_page = 10
-    paginator = Paginator(list(quotes), per_page)
-    quotes_on_page = paginator.page(page)
-    
-    top_tags = get_top_tags()
-    context={
-            "quotes": quotes_on_page, 
-            "top_tags": top_tags,
-            "functional_menu": functional_menu,
-             }
 
+    if query:
+        quotes = quotes.filter(
+            Q(quote__icontains=query)
+            | Q(tags__name__icontains=query)
+            | Q(author__fullname__icontains=query)
+        ).distinct()
+
+        per_page = quotes.count() if quotes.count() <= 10 else 1000
+    else:
+        per_page = 10
+
+    paginator = Paginator(quotes, per_page)
+    quotes_on_page = paginator.get_page(page)
+
+    top_tags = get_top_tags()
+
+    context = {
+        "query": query,
+        "top_tags": top_tags,
+        "quotes": quotes_on_page,
+        "functional_menu": functional_menu,
+    }
 
     return render(
         request,
         "quotes/index.html",
         context,
     )
+
 
 
 def quotes_by_tag(request, tag_name, page=1):
@@ -65,7 +76,11 @@ def quotes_by_tag(request, tag_name, page=1):
     quotes_on_page = paginator.page(page)
 
     top_tags = get_top_tags()
-    context={"quotes": quotes_on_page, "tag": tag, "top_tags": top_tags}
+    context={"quotes": quotes_on_page,
+             "tag": tag,
+             "top_tags": top_tags,
+             "functional_menu": functional_menu
+             }
 
     return render(
         request,
@@ -121,27 +136,6 @@ def add_quote(request):
         form = QuoteForm()
         context={"form": form}
     return render(request, "quotes/add_quote.html", context)
-
-
-def search_results(request):
-    query = request.GET.get("search_query")
-    results = []
-    if query:
-        results = Quote.objects.filter(
-            Q(quote__icontains=query)
-            | Q(tags__name__icontains=query)
-            | Q(author__fullname__icontains=query)
-        ).distinct()
-
-    top_tags = get_top_tags()
-
-    context = {
-        "query": query,
-        "quotes": results,
-        "top_tags": top_tags,
-        "functional_menu": functional_menu,
-    }
-    return render(request, "quotes/search_results.html", context)
 
 
 def fill_base(request):

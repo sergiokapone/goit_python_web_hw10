@@ -1,16 +1,33 @@
-{% extends 'quotes/base.html '%} {% load extract %}{% block content %}
-<div class="row">
-  <div class="col-md-8">
-    <div>{% include 'quotes/functional_buttons.html' %}</div>
-  </div>
-  <div class="col-md-4">
-    <div class="row">{% include 'quotes/search_form.html' %}</div>
-  </div>
-</div>
+{% extends 'quotes/base.html' %} {% block content %} {% if query %}
+<h2>Search results for '{{ query }}'</h2>
+{% endif %}
 <div class="row">
   <div class="col-md-8">
     <div>{% include 'quotes/quotes.html' %}</div>
-    <div>{% include 'quotes/prev_next.html' with top_tags=top_tags %}</div>
+    <nav>
+      <ul class="pager d-flex justify-content-between">
+        <li
+          class="previous {% if not quotes.has_previous %}invisible{% endif %}"
+        >
+          {% if quotes.has_previous %}
+          <a
+            href="{% url 'quotes:root_paginate' page=quotes.previous_page_number %}"
+          >
+            <span aria-hidden="true">←</span> Previous
+          </a>
+          {% endif %}
+        </li>
+        <li class="next {% if not quotes.has_next %}invisible{% endif %}">
+          {% if quotes.has_next %}
+          <a
+            href="{% url 'quotes:root_paginate' page=quotes.next_page_number %}"
+          >
+            Next <span aria-hidden="true">→</span>
+          </a>
+          {% endif %}
+        </li>
+      </ul>
+    </nav>
   </div>
   {% include 'quotes/top_tags.html' with top_tags=top_tags %}
 </div>

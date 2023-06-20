@@ -25,14 +25,29 @@ def get_top_tags():
     return top_tags
 
 
+functional_menu = [
+    {"title": "Add author", "url_name": "quotes:add_author"},
+    {"title": "Add Quote", "url_name": "quotes:add_quote"},
+    {"title": "Scrape Quotes", "url_name": "quotes:scrape_quotes"},
+    {"title": "Fill Base", "url_name": "quotes:fill_base"},
+]
+
 def main(request, page=1):
+
+
+    
     quotes = Quote.objects.all()
     per_page = 10
     paginator = Paginator(list(quotes), per_page)
     quotes_on_page = paginator.page(page)
-
+    
     top_tags = get_top_tags()
-    context={"quotes": quotes_on_page, "top_tags": top_tags}
+    context={
+            "quotes": quotes_on_page, 
+            "top_tags": top_tags,
+            "functional_menu": functional_menu,
+             }
+
 
     return render(
         request,
@@ -124,6 +139,7 @@ def search_results(request):
         "query": query,
         "quotes": results,
         "top_tags": top_tags,
+        "functional_menu": functional_menu,
     }
     return render(request, "quotes/search_results.html", context)
 

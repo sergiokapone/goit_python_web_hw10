@@ -1,11 +1,13 @@
 import json
 import os
+from django.http import Http404, HttpResponseNotFound
 
 from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.urls import reverse
 
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
@@ -28,6 +30,9 @@ functional_menu = [
     {"title": "Fill Base", "url_name": "quotes:fill_base"},
 ]
 
+def pageNotFound(request, exceprion):
+    return HttpResponseNotFound("<h2>Page not found</h2>")
+
 def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
     per_page = 10
     paginator = Paginator(queryset, per_page)
@@ -42,9 +47,49 @@ def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
         "page_type": page_type,
         "tag_name": tag_name
     }
+
+
+    context.update({
+        "previous_page_url": reverse(
+            "quotes:root_paginate", 
+            kwargs={"page": quotes_on_page.previous_page_number()}
+            ) 
+            if quotes_on_page.has_previous() else None,
+        "next_page_url": reverse(
+            "quotes:root_paginate", 
+            kwargs={"page": quotes_on_page.next_page_number()}) 
+            if quotes_on_page.has_next() else None,
+        "previous_page_url_search":reverse(
+            "quotes:searched_results_paginated", 
+                kwargs={"query": query, 
+                        "page": quotes_on_page.previous_page_number()}) 
+                if quotes_on_page.has_previous() else None,
+        "next_page_url_search":  reverse(
+            "quotes:searched_results_paginated", 
+                kwargs={"query": query, 
+                        "page": quotes_on_page.next_page_number()}) 
+                if quotes_on_page.has_next() else None,
+    })
+
     if tag_name:
         tag = Tag.objects.get(name=tag_name)
-        context.update({"tag": tag})    
+        context.update({
+            "tag": tag,
+            "previous_page_url_tag": reverse(
+                "quotes:quotes_by_tag", 
+                kwargs={"tag_name": tag.name, 
+                        "page": quotes_on_page.previous_page_number()}) 
+                        if quotes_on_page.has_previous() else None,
+            "next_page_url_tag": reverse(
+                "quotes:quotes_by_tag", 
+                kwargs={"tag_name": tag.name, 
+                        "page": quotes_on_page.next_page_number()}) 
+                        if quotes_on_page.has_next() else None,
+        })
+
+    
+
+     
     return render(request, "quotes/index.html", context)
 
 
@@ -62,6 +107,8 @@ def searched_results(request, query=None, page=1):
         Q(tags__name__icontains=query) |
         Q(author__fullname__icontains=query)
     ).distinct()
+    if not len(quotes):
+        raise Http404()
     return get_quotes(request, quotes, page, "search", query=query)
 
 def quotes_by_tag(request, tag_name, page=1):

@@ -1,14 +1,29 @@
 {% extends 'quotes/base.html' %} {% block content %}
 
-<div class="author-details">
-  <h3 class="author-title">{{ author.fullname }}</h3>
-  <p>
-    <strong>Born:</strong>
-    <span class="author-born-date">{{ author.born_date }}</span>
-    <span class="author-born-location">{{ author.born_location }}</span>
-  </p>
-  <p><strong>Description:</strong></p>
-  <div class="author-description">{{ author.description }}</div>
+<div class="row">
+  {%if author.photo %}
+  <div class="col-md-2 mr-2">
+    <img
+      class="img-article-left thumb"
+      width="156"
+      src="{{ author.photo.url }}"
+    />
+  </div>
+  {% endif %}
+  <div class="col-md-8">
+    <div class="author-details">
+      <h3 class="author-title">{{ author.fullname }}</h3>
+      <p>
+        <strong>Born:</strong>
+        <span class="author-born-date">{{ author.born_date }}</span>
+        <span class="author-born-location">{{ author.born_location }}</span>
+      </p>
+      <p class="text-justify"><strong>Description:</strong></p>
+      <div class="author-description container text-justify">
+        {{ author.description }}
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

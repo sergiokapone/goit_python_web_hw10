@@ -1,4 +1,8 @@
 from django.urls import include, path
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 from . import views
 
 app_name = "quotes"
@@ -16,6 +20,7 @@ urlpatterns = [
     path("scrape_quotes/", views.scrape_quotes, name="scrape_quotes"),
     path("fill_base/", views.fill_base, name="fill_base"),
     path('search/', views.searched_results, name='searched_results'),
-    path('search/<str:query>/page/<int:page>/', views.searched_results, name='searched_results_paginated')
-
+    path('search/<str:query>/page/<int:page>/', views.searched_results, name='searched_results_paginated'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -32,44 +32,10 @@ functional_menu = [
     {"title": "Fill Base", "url_name": "quotes:fill_base"},
 ]
 
-def main(request, page=1):
-
-    quotes = Quote.objects.all()
-
+def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
     per_page = 10
-
-    paginator = Paginator(quotes, per_page)
+    paginator = Paginator(queryset, per_page)
     quotes_on_page = paginator.get_page(page)
-
-    top_tags = get_top_tags()
-
-    context = {
-        "top_tags": top_tags,
-        "quotes": quotes_on_page,
-        "functional_menu": functional_menu,
-        "page_type": "quotes"
-    }
-
-    return render(
-        request,
-        "quotes/index.html",
-        context,
-    )
-
-
-def searched_results(request, query=None, page=1):
-    query = request.GET.get("search_query")  or query
-    quotes = Quote.objects.filter(
-        Q(quote__icontains=query) |
-        Q(tags__name__icontains=query) |
-        Q(author__fullname__icontains=query)
-    ).distinct()
-
-    per_page = 10
-
-    paginator = Paginator(quotes, per_page)
-    quotes_on_page = paginator.get_page(page)
-
     top_tags = get_top_tags()
 
     context = {
@@ -77,34 +43,33 @@ def searched_results(request, query=None, page=1):
         "top_tags": top_tags,
         "quotes": quotes_on_page,
         "functional_menu": functional_menu,
-        "page_type": "search"
+        "page_type": page_type,
+        "tag_name": tag_name
     }
+    if tag_name:
+        tag = Tag.objects.get(name=tag_name)
+        context.update({"tag": tag})    
+    return render(request, "quotes/index.html", context)
 
-    return render(request, 'quotes/index.html', context)
+
+def main(request, page=1):
+    quotes = Quote.objects.all()
+    return get_quotes(request, quotes, page, "quotes")
 
 
+def searched_results(request, query=None, page=1):
+    query = request.GET.get("search_query") or query
+    quotes = Quote.objects.filter(
+        Q(quote__icontains=query) |
+        Q(tags__name__icontains=query) |
+        Q(author__fullname__icontains=query)
+    ).distinct()
+    return get_quotes(request, quotes, page, "search", query=query)
 
 def quotes_by_tag(request, tag_name, page=1):
     tag = Tag.objects.get(name=tag_name)
     quotes = Quote.objects.filter(tags=tag)
-
-    per_page = 10
-    paginator = Paginator(quotes, per_page)
-    quotes_on_page = paginator.page(page)
-
-    top_tags = get_top_tags()
-    context={"quotes": quotes_on_page,
-             "tag": tag,
-             "top_tags": top_tags,
-             "functional_menu": functional_menu,
-             "page_type": "tags"
-             }
-
-    return render(
-        request,
-        "quotes/index.html",
-        context,
-    )
+    return get_quotes(request, quotes, page, "tags", tag_name=tag_name)
 
 
 def author_page(request, author_slug):

@@ -16,6 +16,9 @@ class Author(models.Model):
 
     def __str__(self):
         return self.fullname
+    
+    class Meta:
+        ordering = ['fullname']
 
 
 class Tag(models.Model):
@@ -23,6 +26,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        ordering = ['name']
 
 
 class Quote(models.Model):
@@ -32,3 +38,6 @@ class Quote(models.Model):
         Author, on_delete=models.CASCADE, default=None, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['author']

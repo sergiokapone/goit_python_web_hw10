@@ -58,7 +58,9 @@ def main(request, page=1):
 
 
 def searched_results(request, query=None, page=1):
-    query = request.GET.get("search_query") or query
+    if query is None:
+        return main(request, page)
+    query = request.GET.get("search_query")
     quotes = Quote.objects.filter(
         Q(quote__icontains=query) |
         Q(tags__name__icontains=query) |

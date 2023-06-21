@@ -1,9 +1,20 @@
 {% extends 'quotes/base.html' %} {% block content %}
-<div class="row">
-  <div class="col-md-8">
-    <div>{% include 'quotes/quotes.html' %}</div>
-    {%include 'quotes/pagination.html'%}
-  </div>
-  {% include 'quotes/top_tags.html' with top_tags=top_tags %}
-</div>
-{% endblock %}
+    <div class="row">
+      <div class="col-md-8">
+        <h2 class="text-primary text-center">
+          {%if page_type == "tags"%} 
+          Цитати з тегом "{{tag_name}}"
+          {%elif page_type == "search"%} 
+          Результати пошуку для запиту "{{query}}" 
+          {%endif%}
+          </h2>
+        </div>
+      <div class="col-md-8">
+        <div>{% include 'quotes/quotes.html' %}</div>
+        {%include 'quotes/pagination.html'%}
+      </div>
+      {% include 'quotes/top_tags.html' with top_tags=top_tags %}
+    </div>
+    {% endblock %}
+  </h3>
+</h3>

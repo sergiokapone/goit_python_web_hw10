@@ -47,6 +47,7 @@ def main(request, page=1):
         "top_tags": top_tags,
         "quotes": quotes_on_page,
         "functional_menu": functional_menu,
+        "page_type": "quotes"
     }
 
     return render(
@@ -76,9 +77,10 @@ def searched_results(request, query=None, page=1):
         "top_tags": top_tags,
         "quotes": quotes_on_page,
         "functional_menu": functional_menu,
+        "page_type": "search"
     }
 
-    return render(request, 'quotes/searched_results.html', context)
+    return render(request, 'quotes/index.html', context)
 
 
 
@@ -94,12 +96,13 @@ def quotes_by_tag(request, tag_name, page=1):
     context={"quotes": quotes_on_page,
              "tag": tag,
              "top_tags": top_tags,
-             "functional_menu": functional_menu
+             "functional_menu": functional_menu,
+             "page_type": "tags"
              }
 
     return render(
         request,
-        "quotes/quotes_by_tag.html",
+        "quotes/index.html",
         context,
     )
 

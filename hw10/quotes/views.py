@@ -13,10 +13,6 @@ from pymongo.errors import ConnectionFailure
 from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote, Tag
 
-
-
-
-
 def get_top_tags():
     top_tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by("-num_quotes")[
         :10

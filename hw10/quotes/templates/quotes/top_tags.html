@@ -1,15 +1,11 @@
-<div class="col-md-4 tags-box">
-  <div class="col-md-8 tags-box">
-    <h2>Top Ten tags</h2>
-    {% for tag, popularity in top_tags %}
-    <span class="tag-item">
-      <a
-        class="tag"
-        style="font-size: {{ popularity }}px"
-        href="/tag/{{ tag.name }}/page/1"
-        >{{ tag.name }}</a
-      >
-    </span>
-    {% endfor %}
-  </div>
-</div>
+<h2>Top Ten tags</h2>
+{% for tag, popularity in top_tags %}
+<span class="tag-item">
+  <a
+    class="tag"
+    style="font-size: {{ popularity }}px"
+    href="/tag/{{ tag.name }}/page/1"
+    >{{ tag.name }}</a
+  >
+</span>
+{% endfor %}

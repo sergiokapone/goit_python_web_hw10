@@ -13,7 +13,10 @@
         <div>{% include 'quotes/quotes.html' %}</div>
         {%include 'quotes/pagination.html'%}
       </div>
-      {% include 'quotes/top_tags.html' with top_tags=top_tags %}
+        <div class="col-md-3 tags-box">
+        {% include 'quotes/top_tags.html' with top_tags=top_tags %}
+        {% include 'quotes/video.html' %}
+      </div>
     </div>
     {% endblock %}
   </h3>

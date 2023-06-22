@@ -15,11 +15,12 @@ from pymongo.errors import ConnectionFailure
 from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote, Tag
 
+
 def get_top_tags():
     top_tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by("-num_quotes")[
         :10
     ]
-    top_tags = [(tag,  2.75* tag.num_quotes) for tag in top_tags]
+    top_tags = [(tag, 2.75 * tag.num_quotes) for tag in top_tags]
     return top_tags
 
 
@@ -30,8 +31,10 @@ functional_menu = [
     {"title": "Fill Base", "url_name": "quotes:fill_base"},
 ]
 
+
 def pageNotFound(request, exceprion):
     return HttpResponseNotFound("<h2>Page not found</h2>")
+
 
 def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
     per_page = 10
@@ -45,51 +48,64 @@ def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
         "quotes": quotes_on_page,
         "functional_menu": functional_menu,
         "page_type": page_type,
-        "tag_name": tag_name
+        "tag_name": tag_name,
     }
 
-
-    context.update({
-        "previous_page_url": reverse(
-            "quotes:root_paginate", 
-            kwargs={"page": quotes_on_page.previous_page_number()}
-            ) 
-            if quotes_on_page.has_previous() else None,
-        "next_page_url": reverse(
-            "quotes:root_paginate", 
-            kwargs={"page": quotes_on_page.next_page_number()}) 
-            if quotes_on_page.has_next() else None,
-        "previous_page_url_search":reverse(
-            "quotes:searched_results_paginated", 
-                kwargs={"query": query, 
-                        "page": quotes_on_page.previous_page_number()}) 
-                if quotes_on_page.has_previous() else None,
-        "next_page_url_search":  reverse(
-            "quotes:searched_results_paginated", 
-                kwargs={"query": query, 
-                        "page": quotes_on_page.next_page_number()}) 
-                if quotes_on_page.has_next() else None,
-    })
+    context.update(
+        {
+            "previous_page_url": reverse(
+                "quotes:root_paginate",
+                kwargs={"page": quotes_on_page.previous_page_number()},
+            )
+            if quotes_on_page.has_previous()
+            else None,
+            "next_page_url": reverse(
+                "quotes:root_paginate",
+                kwargs={"page": quotes_on_page.next_page_number()},
+            )
+            if quotes_on_page.has_next()
+            else None,
+            "previous_page_url_search": reverse(
+                "quotes:searched_results_paginated",
+                kwargs={"query": query, "page": quotes_on_page.previous_page_number()},
+            )
+            if quotes_on_page.has_previous()
+            else None,
+            "next_page_url_search": reverse(
+                "quotes:searched_results_paginated",
+                kwargs={"query": query, "page": quotes_on_page.next_page_number()},
+            )
+            if quotes_on_page.has_next()
+            else None,
+        }
+    )
 
     if tag_name:
         tag = Tag.objects.get(name=tag_name)
-        context.update({
-            "tag": tag,
-            "previous_page_url_tag": reverse(
-                "quotes:quotes_by_tag", 
-                kwargs={"tag_name": tag.name, 
-                        "page": quotes_on_page.previous_page_number()}) 
-                        if quotes_on_page.has_previous() else None,
-            "next_page_url_tag": reverse(
-                "quotes:quotes_by_tag", 
-                kwargs={"tag_name": tag.name, 
-                        "page": quotes_on_page.next_page_number()}) 
-                        if quotes_on_page.has_next() else None,
-        })
+        context.update(
+            {
+                "tag": tag,
+                "previous_page_url_tag": reverse(
+                    "quotes:quotes_by_tag",
+                    kwargs={
+                        "tag_name": tag.name,
+                        "page": quotes_on_page.previous_page_number(),
+                    },
+                )
+                if quotes_on_page.has_previous()
+                else None,
+                "next_page_url_tag": reverse(
+                    "quotes:quotes_by_tag",
+                    kwargs={
+                        "tag_name": tag.name,
+                        "page": quotes_on_page.next_page_number(),
+                    },
+                )
+                if quotes_on_page.has_next()
+                else None,
+            }
+        )
 
-    
-
-     
     return render(request, "quotes/index.html", context)
 
 
@@ -103,13 +119,14 @@ def searched_results(request, query=None, page=1):
     if query is None:
         return main(request, page)
     quotes = Quote.objects.filter(
-        Q(quote__icontains=query) |
-        Q(tags__name__icontains=query) |
-        Q(author__fullname__icontains=query)
+        Q(quote__icontains=query)
+        | Q(tags__name__icontains=query)
+        | Q(author__fullname__icontains=query)
     ).distinct()
     if not len(quotes):
         raise Http404()
     return get_quotes(request, quotes, page, "search", query=query)
+
 
 def quotes_by_tag(request, tag_name, page=1):
     tag = Tag.objects.get(name=tag_name)
@@ -121,7 +138,7 @@ def author_page(request, author_slug):
     author = Author.objects.get(slug=author_slug)
 
     top_tags = get_top_tags()
-    context={"author": author, "top_tags": top_tags}
+    context = {"author": author, "top_tags": top_tags}
 
     return render(
         request,
@@ -133,14 +150,13 @@ def author_page(request, author_slug):
 @login_required
 def add_author(request):
     if request.method == "POST":
-        form = AuthorForm(request.POST)
+        form = AuthorForm(request.POST, request.FILES)
         if form.is_valid():
-            fullname = form.cleaned_data["fullname"]
-            if not Author.objects.filter(fullname=fullname).exists():
-                form.save()
-                return redirect("quotes:root")
-            else:
-                messages.error(request, "Author already exists.")
+            author = form.save(commit=False)
+            author.user = request.user
+            author.save()
+            form.save_m2m()
+            return redirect("quotes:add_quote")
     else:
         form = AuthorForm()
     return render(request, "quotes/add_author.html", {"form": form})
@@ -162,7 +178,7 @@ def add_quote(request):
             return redirect("quotes:root")
     else:
         form = QuoteForm()
-        context={"form": form}
+        context = {"form": form}
     return render(request, "quotes/add_quote.html", context)
 
 
@@ -203,7 +219,6 @@ def fill_base(request):
         messages.error(request, "Failed to connect to MongoDB!")
 
     return redirect("quotes:root")
-
 
 
 def scrape_quotes(request):

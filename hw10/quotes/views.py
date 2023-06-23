@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 
+
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
@@ -137,28 +138,43 @@ def quotes_by_tag(request, tag_name, page=1):
 def author_page(request, author_slug):
     author = Author.objects.get(slug=author_slug)
 
-    top_tags = get_top_tags()
-    context = {"author": author, "top_tags": top_tags}
+    context = {"author": author}
+    return render(request, "quotes/author_page.html", context)
 
-    return render(
-        request,
-        "quotes/author_page.html",
-        context,
-    )
+
+# @login_required
+# def add_author(request):
+
+#     if request.method == "POST":
+#         form = AuthorForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             author = form.save(commit=False)
+#             # author.user = request.user
+#             author.save()
+#             form.save_m2m()
+#             return redirect("quotes:add_quote")
+#     else:
+#         form = AuthorForm()
+
+#     return render(request, "quotes/add_author.html", {"form": form})
 
 
 @login_required
 def add_author(request):
+    author_slug = request.GET.get("author_slug")
+    if author_slug:
+        author = Author.objects.get(slug=author_slug)
+        form = AuthorForm(request.POST or None, request.FILES or None, instance=author)
+    else:
+        form = AuthorForm(request.POST or None, request.FILES or None)
+
     if request.method == "POST":
-        form = AuthorForm(request.POST, request.FILES)
         if form.is_valid():
             author = form.save(commit=False)
-            author.user = request.user
             author.save()
-            form.save_m2m()
+            form.save()
             return redirect("quotes:add_quote")
-    else:
-        form = AuthorForm()
+
     return render(request, "quotes/add_author.html", {"form": form})
 
 

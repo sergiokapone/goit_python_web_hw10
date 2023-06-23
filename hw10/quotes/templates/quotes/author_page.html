@@ -1,7 +1,7 @@
 {% extends 'quotes/base.html' %} {% block content %}
 
 <div class="row">
-  {%if author.photo %}
+  {% if author.photo %}
   <div class="col-md-2 mr-2">
     <img
       class="img-article-left thumb"
@@ -24,6 +24,14 @@
       </div>
     </div>
   </div>
+</div>
+
+<div>
+  <a
+    href="{% url 'quotes:add_author' %}?author_slug={{ author.slug }}"
+    class="btn btn-primary"
+    >Update Info</a
+  >
 </div>
 
 {% endblock %}

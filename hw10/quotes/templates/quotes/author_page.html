@@ -1,18 +1,28 @@
 {% extends 'quotes/base.html' %} {% block content %}
 
 <div class="row">
-  {% if author.photo %}
   <div class="col-md-2 mr-2">
+    {% if author.photo %}
     <img
       class="img-article-left thumb"
       width="156"
       src="{{ author.photo.url }}"
     />
+    {% endif %}
   </div>
-  {% endif %}
+
   <div class="col-md-8">
     <div class="author-details">
       <h3 class="author-title">{{ author.fullname }}</h3>
+      {% if user.is_authenticated %}
+      <div>
+        <a
+          href="{% url 'quotes:add_author' %}?author_slug={{ author.slug }}"
+          class="btn btn-primary"
+          >Update Info</a
+        >
+        {% endif %}
+      </div>
       <p>
         <strong>Born:</strong>
         <span class="author-born-date">{{ author.born_date }}</span>
@@ -26,12 +36,12 @@
   </div>
 </div>
 
-<div>
-  <a
-    href="{% url 'quotes:add_author' %}?author_slug={{ author.slug }}"
-    class="btn btn-primary"
-    >Update Info</a
-  >
+<hr />
+<div class="row">
+  <div class="col-md-2">
+    <h4>Quotes by <br />{{ author.fullname }}</h4>
+  </div>
+  <div class="col-md-8">{% include 'quotes/quotes.html' %}</div>
 </div>
 
 {% endblock %}

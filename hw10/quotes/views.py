@@ -137,26 +137,11 @@ def quotes_by_tag(request, tag_name, page=1):
 
 def author_page(request, author_slug):
     author = Author.objects.get(slug=author_slug)
+    quotes = author.quote_set.all()
+    print(quotes)
 
-    context = {"author": author}
+    context = {"author": author, "quotes": quotes}
     return render(request, "quotes/author_page.html", context)
-
-
-# @login_required
-# def add_author(request):
-
-#     if request.method == "POST":
-#         form = AuthorForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             author = form.save(commit=False)
-#             # author.user = request.user
-#             author.save()
-#             form.save_m2m()
-#             return redirect("quotes:add_quote")
-#     else:
-#         form = AuthorForm()
-
-#     return render(request, "quotes/add_author.html", {"form": form})
 
 
 @login_required

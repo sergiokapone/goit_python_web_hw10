@@ -35,9 +35,15 @@
 │   │   ├── migrations\
 │   │   ├── static\
 │   │   ├── templates\
+│   │   ├── views.py
 │   │   └── views.py
-│   └── utils\
-└── manage.py
+│   ├── utils\  
+│   └── manage.py
+├── Dockerfile
+├── Pipfile
+├── Pipfile.lock
+├── README.md
+└── fly.toml
 ```
 
 ## Установка бази даних

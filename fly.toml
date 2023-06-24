@@ -1,0 +1,44 @@
+app = "quotesapp"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "ams"
+processes = []
+
+
+[env]
+  DATABASE_HOST = "lucky.db.elephantsql.com"
+  DATABASE_NAME = "wysbadsb"
+  DATABASE_PASSWORD = "93KuU6-FWEGHIruZcLBmQXrw8lLhQBi3"
+  DATABASE_PORT = "5432"
+  DATABASE_USER = "wysbadsb"
+  PORT = "8000"
+  SECRET_KEY = "django-insecure-9!)y**&cpgalrve2dps5@44j!1#jea5%xr3s$uf!kpr&!_n7fm"
+
+[experimental]
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8000
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

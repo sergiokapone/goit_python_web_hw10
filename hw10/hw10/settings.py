@@ -12,21 +12,30 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-9!)y**&cpgalrve2dps5@44j!1#jea5%xr3s$uf!kpr&!_n7fm"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*", "quotesapp.fly.dev"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "https://quotesapp.fly.dev",
+]
 
 
 # Application definition
@@ -76,14 +85,13 @@ WSGI_APPLICATION = "hw10.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "wysbadsb",
-        "USER": "wysbadsb",
-        "PASSWORD": "93KuU6-FWEGHIruZcLBmQXrw8lLhQBi3",
-        "HOST": "lucky.db.elephantsql.com",
-        "PORT": "5432",
+        "NAME": env("DATABASE_NAME"),
+        "USER": env("DATABASE_USER"),
+        "PASSWORD": env("DATABASE_PASSWORD"),
+        "HOST": env("DATABASE_HOST"),
+        "PORT": env("DATABASE_PORT"),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

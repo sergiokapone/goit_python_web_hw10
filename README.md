@@ -36,9 +36,15 @@
 │   │   ├── migrations\
 │   │   ├── static\
 │   │   ├── templates\
+│   │   ├── views.py
 │   │   └── views.py
-│   └── utils\
-└── manage.py
+│   ├── utils\  
+│   └── manage.py
+├── Dockerfile
+├── Pipfile
+├── Pipfile.lock
+├── README.md
+└── fly.toml
 ```
 
 ## Установка бази даних
@@ -97,7 +103,27 @@ Quit the server with CONTROL-C.
 
 ![scrape](./pictures/scrape.png)
 
-###
+## Деплою застосунку у сервісі Fly.io
+
+Встановіть клієнт Fly.io за допомогою команди:
+
+```shell
+powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
+```
+
+В корені проекту запустіть:
+
+```shell
+fly deploy
+```
+
+Після завершення деплою буде виведене повідомлення
+```shell
+Visit your newly deployed app at https://quotesapp.fly.dev/
+```
+
+Застосунок буде доступний за адресою https://quotesapp.fly.dev/
+
 
 ## Довідкові матеріали
 

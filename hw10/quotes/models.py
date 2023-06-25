@@ -54,5 +54,5 @@ class Quote(models.Model):
         return self.quote
 
     class Meta:
-        ordering = ['author']
+        ordering = ['-created_at']
 

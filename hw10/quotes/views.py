@@ -1,138 +1,106 @@
 import json
 import os
-from django.http import Http404, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 
 from django.shortcuts import redirect, render
-from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView
+from django.views.generic import ListView
 
-
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
 
 from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote, Tag
 
 
-def get_top_tags():
-    top_tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by("-num_quotes")[
-        :10
-    ]
-    top_tags = [(tag, 2.75 * tag.num_quotes) for tag in top_tags]
-    return top_tags
+class DataMixin:
 
+    model = Quote
+    paginate_by = 10
+    template_name = "quotes/index.html"
+    context_object_name = "quotes"
 
-functional_menu = [
-    {"title": "Add author", "url_name": "quotes:add_author"},
-    {"title": "Add Quote", "url_name": "quotes:add_quote"},
-    {"title": "Scrape Quotes", "url_name": "quotes:scrape_quotes"},
-    {"title": "Fill Base", "url_name": "quotes:fill_base"},
-]
+    def get_top_tags(self):
+        top_tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by(
+            "-num_quotes"
+        )[:10]
+        top_tags = [(tag, 2.75 * tag.num_quotes) for tag in top_tags]
+        return top_tags
+
+    def get_quotes(self, **kwargs):
+
+        context = kwargs
+
+        functional_menu = [
+            {"title": "About", "url_name": "quotes:about"},
+            {"title": "Add Author", "url_name": "quotes:add_author"},
+            {"title": "Add Quote", "url_name": "quotes:add_quote"},
+            {"title": "Scrape Quotes", "url_name": "quotes:scrape_quotes"},
+        ]
+
+        top_tags = self.get_top_tags()
+
+        if not self.request.user.is_authenticated:
+            functional_menu = [functional_menu[0]]
+
+        context["top_tags"] = top_tags
+        context["functional_menu"] = functional_menu
+        return context
 
 
 def pageNotFound(request, exceprion):
     return HttpResponseNotFound("<h2>Page not found</h2>")
 
 
-def get_quotes(request, queryset, page, page_type, query=None, tag_name=None):
-    per_page = 10
-    paginator = Paginator(queryset, per_page)
-    quotes_on_page = paginator.get_page(page)
-    top_tags = get_top_tags()
+class Main(DataMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_quotes())
+        return context
 
-    context = {
-        "query": query,
-        "top_tags": top_tags,
-        "quotes": quotes_on_page,
-        "functional_menu": functional_menu,
-        "page_type": page_type,
-        "tag_name": tag_name,
-    }
 
-    context.update(
-        {
-            "previous_page_url": reverse(
-                "quotes:root_paginate",
-                kwargs={"page": quotes_on_page.previous_page_number()},
+class SearchedResults(DataMixin, ListView):
+    def get_queryset(self):
+        query = self.request.GET.get("search_query")
+        queryset = (
+            Quote.objects.filter(
+                Q(quote__icontains=query)
+                | Q(tags__name__icontains=query)
+                | Q(author__fullname__icontains=query)
+            ).distinct()
+            if query
+            else Quote.objects.filter(
+                id__in=self.request.session.get("search_results", [])
             )
-            if quotes_on_page.has_previous()
-            else None,
-            "next_page_url": reverse(
-                "quotes:root_paginate",
-                kwargs={"page": quotes_on_page.next_page_number()},
-            )
-            if quotes_on_page.has_next()
-            else None,
-            "previous_page_url_search": reverse(
-                "quotes:searched_results_paginated",
-                kwargs={"query": query, "page": quotes_on_page.previous_page_number()},
-            )
-            if quotes_on_page.has_previous()
-            else None,
-            "next_page_url_search": reverse(
-                "quotes:searched_results_paginated",
-                kwargs={"query": query, "page": quotes_on_page.next_page_number()},
-            )
-            if quotes_on_page.has_next()
-            else None,
-        }
-    )
-
-    if tag_name:
-        tag = Tag.objects.get(name=tag_name)
-        context.update(
-            {
-                "tag": tag,
-                "previous_page_url_tag": reverse(
-                    "quotes:quotes_by_tag",
-                    kwargs={
-                        "tag_name": tag.name,
-                        "page": quotes_on_page.previous_page_number(),
-                    },
-                )
-                if quotes_on_page.has_previous()
-                else None,
-                "next_page_url_tag": reverse(
-                    "quotes:quotes_by_tag",
-                    kwargs={
-                        "tag_name": tag.name,
-                        "page": quotes_on_page.next_page_number(),
-                    },
-                )
-                if quotes_on_page.has_next()
-                else None,
-            }
+            or super().get_queryset().only("id")
         )
 
-    return render(request, "quotes/index.html", context)
+        self.request.session["search_results"] = list(
+            queryset.values_list("id", flat=True)
+        )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("search_query")
+        context.update(self.get_quotes())
+        return context
 
 
-def main(request, page=1):
-    quotes = Quote.objects.all()
-    return get_quotes(request, quotes, page, "quotes")
+class QuotesByTag(DataMixin, ListView):
+    def get_queryset(self):
+        tag_name = self.kwargs["tag_name"]
+        tag = Tag.objects.get(name=tag_name)
+        queryset = Quote.objects.filter(tags=tag)
+        return queryset
 
-
-def searched_results(request, query=None, page=1):
-    query = request.GET.get("search_query") or query
-    if query is None:
-        return main(request, page)
-    quotes = Quote.objects.filter(
-        Q(quote__icontains=query)
-        | Q(tags__name__icontains=query)
-        | Q(author__fullname__icontains=query)
-    ).distinct()
-    if not len(quotes):
-        raise Http404()
-    return get_quotes(request, quotes, page, "search", query=query)
-
-
-def quotes_by_tag(request, tag_name, page=1):
-    tag = Tag.objects.get(name=tag_name)
-    quotes = Quote.objects.filter(tags=tag)
-    return get_quotes(request, quotes, page, "tags", tag_name=tag_name)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_quotes())
+        return context
 
 
 def author_page(request, author_slug):
@@ -144,82 +112,40 @@ def author_page(request, author_slug):
     return render(request, "quotes/author_page.html", context)
 
 
-@login_required
-def add_author(request):
-    author_slug = request.GET.get("author_slug")
-    if author_slug:
-        author = Author.objects.get(slug=author_slug)
-        form = AuthorForm(request.POST or None, request.FILES or None, instance=author)
-    else:
-        form = AuthorForm(request.POST or None, request.FILES or None)
+class AddAuthorView(LoginRequiredMixin, CreateView):
+    model = Author
+    form_class = AuthorForm
+    template_name = "quotes/add_author.html"
+    success_url = reverse_lazy("quotes:add_quote")
 
-    if request.method == "POST":
-        if form.is_valid():
-            author = form.save(commit=False)
-            author.save()
-            form.save()
-            return redirect("quotes:add_quote")
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        author_slug = self.request.GET.get("author_slug")
+        if author_slug:
+            author = Author.objects.get(slug=author_slug)
+            kwargs["instance"] = author
+        return kwargs
 
-    return render(request, "quotes/add_author.html", {"form": form})
-
-
-@login_required
-def add_quote(request):
-    if request.method == "POST":
-        form = QuoteForm(request.POST)
-        if form.is_valid():
-            quote = form.save(commit=False)
-            quote.save()
-
-            # Processing entered text to create a new tag
-            tag_name = form.cleaned_data["tags"]
-            tag, _ = Tag.objects.get_or_create(name=tag_name)
-            quote.tags.add(tag)
-
-            return redirect("quotes:root")
-    else:
-        form = QuoteForm()
-        context = {"form": form}
-    return render(request, "quotes/add_quote.html", context)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        form.save()
+        return response
 
 
-def fill_base(request):
-    try:
-        client = MongoClient("mongodb+srv://PSM:GoIThw8@cluster0.y0zbkd4.mongodb.net/")
-        db = client.Quotes
+class AddQuoteView(LoginRequiredMixin, CreateView):
+    model = Quote
+    form_class = QuoteForm
+    template_name = "quotes/add_quote.html"
+    success_url = "quotes:root"
 
-        authors = db.authors.find()
-        quotes = db.quotes.find()
-
-        for author in authors:
-            Author.objects.get_or_create(
-                fullname=author["fullname"],
-                born_date=author["born_date"],
-                born_location=author["born_location"],
-                description=author["description"],
-            )
-
-        for quote in quotes:
-            tags = []
-            for tag in quote["tags"]:
-                t, *_ = Tag.objects.get_or_create(name=tag)
-                tags.append(t)
-
-            exist_quote = bool(len(Quote.objects.filter(quote=quote["quote"])))
-
-            if not exist_quote:
-                author = db.authors.find_one({"_id": quote["author"]})
-                a = Author.objects.get(fullname=author["fullname"])
-                q = Quote.objects.create(quote=quote["quote"], author=a)
-                for tag in tags:
-                    q.tags.add(tag)
-
-        messages.success(request, "Base filled successfully!")
-
-    except ConnectionFailure:
-        messages.error(request, "Failed to connect to MongoDB!")
-
-    return redirect("quotes:root")
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        quote = form.save(commit=False)
+        quote.save()
+        tag_name = form.cleaned_data["tags"]
+        tag, _ = Tag.objects.get_or_create(name=tag_name)
+        quote.tags.add(tag)
+        return response
 
 
 def scrape_quotes(request):

@@ -1,37 +1,27 @@
 <nav>
-    <ul class="pager d-flex justify-content-between">
-      <li
-        class="previous 
-        {% if not quotes.has_previous %}invisible{% endif %}"
-      >
-        {% if quotes.has_previous %}
-        <a
-          {% if page_type == "quotes"%}
-          href="{{ previous_page_url }}"
-          {% elif page_type == "search" %}
-          href="{{ previous_page_url_search }}"
-          {% elif page_type == "tags" %}
-          href="{{ previous_page_url_tag }}"
-          {% endif %}
-        >
-          <span aria-hidden="true">←</span> Previous
-        </a>
-        {% endif %}
-      </li>
-      <li class="next {% if not quotes.has_next %}invisible{% endif %}">
-        {% if quotes.has_next %}
-        <a
-          {% if page_type == "quotes"%}
-          href="{{ next_page_url }}"
-          {% elif page_type == "search" %}
-          href="{{ next_page_url_search }}"
-          {% elif page_type == "tags" %}
-          href="{{ next_page_url_tag }}"
-          {% endif %}
-        >
-          Next<span aria-hidden="true">→</span>
-        </a>
-        {% endif %}
-      </li>
-    </ul>
-  </nav>
+  <ul class="pager d-flex justify-content-between">
+    {% if page_obj.has_previous %}
+    <li class="page_num">
+      <a href="?page={{ page_obj.previous_page_number }}"><span aria-hidden="true">←</span>Prev</a>
+    </li>
+    {% endif %} 
+    {% for p in paginator.page_range %} 
+    {% if page_obj.number == p  %}
+    <li class="page_num active">
+      <div>{{ p }}</div>
+    </li>
+    {% else %}
+    <li class="page_num">
+      <a href="?page={{ p }}">{{ p }}</a>
+    </li>
+    {% endif %} 
+    {% endfor %} 
+    
+    {% if page_obj.has_next %}
+    <li class="page_num">
+      <a href="?page={{ page_obj.next_page_number }}">Next<span aria-hidden="true">→</span></a>
+    </li>
+    {% endif %}
+    
+  </ul>
+</nav>

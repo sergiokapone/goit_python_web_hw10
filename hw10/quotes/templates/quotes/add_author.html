@@ -8,39 +8,14 @@
 </ul>
 {% endif %}
 <form method="POST" enctype="multipart/form-data" class="form">
-  {% csrf_token %}
+  {% csrf_token %} {% for f in form %}
   <div class="form-group">
-    <label
-      for="{{ form.fullname.id_for_label }}"
-      class="col-sm-2 col-form-label"
-      >Full Name:</label
+    <label for="{{ f.id_for_label }}" class="col-sm-2 col-form-label"
+      >{{ f.label }}:</label
     >
-    <div class="col-12">{{ form.fullname }}</div>
+    <div class="col-12">{{ f }}</div>
   </div>
-  <div class="form-group">
-    <label
-      for="{{ form.born_date.id_for_label }}"
-      class="col-sm-2 col-form-label"
-      >Born Date:</label
-    >
-    <div class="col-12">{{ form.born_date }}</div>
-  </div>
-  <div class="form-group">
-    <label
-      for="{{ form.born_location.id_for_label }}"
-      class="col-sm-2 col-form-label"
-      >Born Location:</label
-    >
-    <div class="col-12">{{ form.born_location }}</div>
-  </div>
-  <div class="form-group">
-    <label for="{{ form.description.id_for_label }}">Description:</label>
-    <div class="col-12">{{ form.description }}</div>
-  </div>
-  <div class="form-group">
-    <label for="{{ form.photo.id_for_label }}">Photo</label>
-    {{ form.photo }}
-  </div>
+  {% endfor %}
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 

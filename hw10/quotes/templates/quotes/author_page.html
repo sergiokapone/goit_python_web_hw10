@@ -14,8 +14,8 @@
   <div class="col-md-8">
     <div class="author-details">
       <h3 class="author-title">{{ author.fullname }}</h3>
-      {% if user.is_authenticated %}
       <div>
+        {% if user.is_authenticated %}
         <a
           href="{% url 'quotes:add_author' %}?author_slug={{ author.slug }}"
           class="btn btn-primary"

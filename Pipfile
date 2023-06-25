@@ -9,6 +9,7 @@ pymongo = "*"
 psycopg2 = "*"
 pillow = "*"
 django-environ = "*"
+environ = "*"
 
 [dev-packages]
 

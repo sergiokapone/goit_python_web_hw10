@@ -1,0 +1,1 @@
+pipenv run python hw10/manage.py runserver

@@ -32,6 +32,7 @@ env = environ.Env()
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ["*", "quotesapp.fly.dev"]
 CSRF_TRUSTED_ORIGINS = [

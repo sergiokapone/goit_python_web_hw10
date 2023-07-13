@@ -15,5 +15,8 @@ RUN pipenv install
 # Копирование приложения
 COPY . /app
 
+# Копирование .env файла
+COPY .env /app
+
 # Запуск приложения
 CMD ["pipenv", "run", "python", "hw10/manage.py", "runserver"]

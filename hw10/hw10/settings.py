@@ -16,7 +16,7 @@ import environ
 
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env_file = BASE_DIR / '.env'
 environ.Env.read_env(env_file)
 env = environ.Env()

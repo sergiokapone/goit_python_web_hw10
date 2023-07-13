@@ -13,7 +13,7 @@ COPY Pipfile $APP_HOME/Pipfile
 
 # Встановимо залежності всередині контейнера
 RUN pip install pipenv
-RUN pipenv install --system
+RUN pipenv install
 
 # Скопіюємо інші файли в робочу директорію контейнера
 COPY . .

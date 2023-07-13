@@ -1,22 +1,36 @@
-# Установка зависимостей
-FROM python:3.10
+# My Django Project
+# Version: 1.0
 
-# Установка pipenv
-RUN pip install --upgrade pip
-RUN pip install pipenv
+# FROM - Image to start building on.
+FROM python:3
 
-# Копирование Pipfile и Pipfile.lock
+
+# PROJECT SETUP
+# ----------------
+
+# sets the working directory
 WORKDIR /app
-COPY Pipfile* /app/
 
-# Установка зависимостей с помощью pipenv
-RUN pipenv install
+# copy these two files from <src> to <dest>
+# <src> = current directory on host machine
+# <dest> = filesystem of the container
+COPY Pipfile Pipfile.lock ./app
 
-# Копирование приложения
-COPY . /app
+# install pipenv on the container
+RUN pip install -U pipenv
 
-# Копирование .env файла
-COPY .env /app
+# install project dependencies
+RUN pipenv install --system
 
-# Запуск приложения
-CMD ["pipenv", "run", "python", "hw10/manage.py", "runserver"]
+# copy all files and directories from <src> to <dest>
+COPY . ./app
+
+
+# RUN SERVER
+# ------------
+
+# expose the port
+EXPOSE 8000
+
+# Command to run
+CMD ["python", "hw10/manage.py", "runserver", "0.0.0.0:8000"]

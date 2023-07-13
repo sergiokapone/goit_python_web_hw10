@@ -35,7 +35,7 @@ SECRET_KEY = env("SECRET_KEY")
 # DEBUG = True
 DEBUG = False
 
-ALLOWED_HOSTS = ["*", "quotesapp.fly.dev", "https://quotes-ys0l.onrender.com"]
+ALLOWED_HOSTS = ["*", "quotesapp.fly.dev", "quotes-ys0l.onrender.com"]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "https://quotesapp.fly.dev",

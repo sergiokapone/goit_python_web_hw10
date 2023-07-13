@@ -103,26 +103,7 @@ Quit the server with CONTROL-C.
 
 ![scrape](./pictures/scrape.png)
 
-## Деплою застосунку у сервісі Fly.io
 
-Встановіть клієнт Fly.io за допомогою команди:
-
-```shell
-powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
-```
-
-В корені проекту запустіть:
-
-```shell
-fly deploy
-```
-
-Після завершення деплою буде виведене повідомлення
-```shell
-Visit your newly deployed app at https://quotesapp.fly.dev/
-```
-
-Застосунок буде доступний за адресою https://quotesapp.fly.dev/
 
 
 ## Довідкові матеріали

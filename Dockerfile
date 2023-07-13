@@ -16,4 +16,4 @@ RUN pipenv install
 COPY . /app
 
 # Запуск приложения
-CMD ["pipenv", "run", "python", "src/manage.py", "runserver"]
+CMD ["pipenv", "run", "python", "hw10/manage.py", "runserver"]

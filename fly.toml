@@ -13,6 +13,13 @@ processes = []
   DATABASE_USER = "wysbadsb"
   PORT = "8000"
   SECRET_KEY = "django-insecure-9!)y**&cpgalrve2dps5@44j!1#jea5%xr3s$uf!kpr&!_n7fm"
+  EMAIL_HOST = "smtp.meta.ua"
+  EMAIL_PORT = 465
+  EMAIL_USE_SSL = true
+  EMAIL_USE_TLS = false
+  EMAIL_HOST_USER = "sergiokapone@meta.ua"
+  EMAIL_HOST_PASSWORD = "Qwer1234"
+  DEFAULT_FROM_EMAIL = "sergiokapone@meta.ua"
 
 [experimental]
   auto_rollback = true

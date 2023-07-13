@@ -1,25 +1,19 @@
-# Docker-команда FROM вказує базовий образ контейнера
-# Наш базовий образ - це Linux з попередньо встановленим python-3.10
+# Установка зависимостей
 FROM python:3.10
 
-# Встановимо змінну середовища
-ENV APP_HOME /app
-
-# Встановимо робочу директорію всередині контейнера
-WORKDIR $APP_HOME
-
-COPY Pipfile.lock $APP_HOME/Pipfile.lock
-COPY Pipfile $APP_HOME/Pipfile
-
-# Встановимо залежності всередині контейнера
+# Установка pipenv
+RUN pip install --upgrade pip
 RUN pip install pipenv
+
+# Копирование Pipfile и Pipfile.lock
+WORKDIR /app
+COPY Pipfile* /app/
+
+# Установка зависимостей с помощью pipenv
 RUN pipenv install
 
-# Скопіюємо інші файли в робочу директорію контейнера
-COPY . .
+# Копирование приложения
+COPY . /app
 
-# Позначимо порт, де працює програма всередині контейнера
-EXPOSE 8000
-
-# Запустимо нашу програму всередині контейнера
-CMD ["python", "hw10/manage.py", "runserver", "0.0.0.0:8000"]
+# Запуск приложения
+CMD ["pipenv", "run", "python", "src/manage.py", "runserver"]

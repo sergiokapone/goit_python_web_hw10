@@ -20,7 +20,7 @@ COPY Pipfile Pipfile.lock ./app
 RUN pip install -U pipenv
 
 # install project dependencies
-RUN pipenv install --system
+RUN pipenv install
 
 # copy all files and directories from <src> to <dest>
 COPY . ./app

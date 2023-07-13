@@ -14,16 +14,17 @@ WORKDIR /app
 # copy these two files from <src> to <dest>
 # <src> = current directory on host machine
 # <dest> = filesystem of the container
-COPY Pipfile Pipfile.lock ./app
+COPY Pipfile /app
+COPY Pipfile.lock /app
 
 # install pipenv on the container
 RUN pip install -U pipenv
 
 # install project dependencies
-RUN pipenv install
+RUN pipenv install --system
 
 # copy all files and directories from <src> to <dest>
-COPY . ./app
+COPY . /app
 
 
 # RUN SERVER
